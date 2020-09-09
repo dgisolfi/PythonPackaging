@@ -1,0 +1,246 @@
+openapi: 3.0.0
+info:
+  title: Coffee ☕️
+  description: A Swagger REST API used to order a tasty beverage
+  contact:
+    email: Daniel.Gisolfi@ibm.com
+  version: 1.0.0
+servers:
+- url: https://dgisolfi:{port}/{basePath}
+  description: production server
+  variables:
+    port:
+      default: "8012"
+    basePath:
+      default: api/
+paths:
+  /menu:
+    get:
+      tags:
+      - Menu
+      summary: Returns all possible drinks
+      operationId: get_menu
+      responses:
+        "200":
+          description: A list of all drinks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/menu'
+                x-content-type: application/json
+        "400":
+          description: An error has occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                x-content-type: application/json
+      x-openapi-router-controller: swagger_server.controllers.menu_controller
+  /menu/{name}:
+    get:
+      tags:
+      - Menu
+      summary: Returns a drink specified by name
+      operationId: get_menu_item
+      parameters:
+      - name: name
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: A list of all drinks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/item'
+              x-content-type: application/json
+        "400":
+          description: An error has occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                x-content-type: application/json
+        "404":
+          description: Drink could not be found
+          content:
+            application/json:
+              schema:
+                type: object
+                x-content-type: application/json
+      x-openapi-router-controller: swagger_server.controllers.menu_controller
+  /order/{oid}:
+    get:
+      tags:
+      - Order
+      summary: Gets an existing order by order id
+      operationId: get_order
+      parameters:
+      - name: oid
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: order retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/order'
+              x-content-type: application/json
+        "400":
+          description: error retrieving order
+          content:
+            application/json:
+              schema:
+                type: object
+                x-content-type: application/json
+        "404":
+          description: Order could not be found
+          content:
+            application/json:
+              schema:
+                type: object
+                x-content-type: application/json
+      x-openapi-router-controller: swagger_server.controllers.order_controller
+    delete:
+      tags:
+      - Order
+      summary: Deletes an existing order by order id
+      operationId: del_order
+      parameters:
+      - name: oid
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: order deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/order'
+              x-content-type: application/json
+        "400":
+          description: error deleting order
+          content:
+            application/json:
+              schema:
+                type: object
+                x-content-type: application/json
+        "404":
+          description: Order could not be found
+          content:
+            application/json:
+              schema:
+                type: object
+                x-content-type: application/json
+      x-openapi-router-controller: swagger_server.controllers.order_controller
+  /order:
+    post:
+      tags:
+      - Order
+      summary: Creates a order for a list of drinks
+      operationId: create_order
+      requestBody:
+        description: a order
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/order'
+      responses:
+        "201":
+          description: order created
+          content:
+            application/json:
+              schema:
+                type: object
+                x-content-type: application/json
+        "400":
+          description: error creating order
+          content:
+            application/json:
+              schema:
+                type: object
+                x-content-type: application/json
+      x-openapi-router-controller: swagger_server.controllers.order_controller
+components:
+  schemas:
+    menu:
+      type: array
+      items:
+        $ref: '#/components/schemas/item'
+    item:
+      properties:
+        name:
+          type: string
+          description: the name of the drink
+          example: Espresso
+        size:
+          type: array
+          description: The available sizes of a beverage
+          example:
+          - Small
+          - Medium
+          - Large
+          items:
+            type: string
+        calories:
+          type: integer
+          description: The total calories of a drink
+          example: 8
+        price:
+          type: array
+          description: A list of prices associated with sizes
+          example:
+          - 2
+          - 3
+          - 4
+          items:
+            type: number
+            format: double
+      example:
+        name: Espresso
+        size:
+        - Small
+        - Medium
+        - Large
+        calories: 8
+        price:
+        - 2
+        - 3
+        - 4
+    order:
+      type: array
+      items:
+        $ref: '#/components/schemas/drink'
+    drink:
+      properties:
+        name:
+          type: string
+          description: the name of the drink
+          example: Espresso
+        size:
+          type: string
+          description: The size
+          example: Small
+        iced:
+          type: boolean
+          description: Is it iced?
+          example: false
+      example:
+        name: Espresso
+        size: Small
+

@@ -1,0 +1,12 @@
+# Daniel Nicolas Gisolfi
+# 2019-5-23
+
+version: '2'
+services:
+  coffee:
+    build: .
+    ports:
+      - "8012:8012"
+    container_name: coffee
+    volumes:
+      - ${PWD}:/Coof

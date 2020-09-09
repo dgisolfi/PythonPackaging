@@ -10,7 +10,6 @@ import os
 import json
 
 import pytest
-
 from pytemplate.utils.logger import Logger
 
 # TODO: This is what you call good tests? pfffff...weak
